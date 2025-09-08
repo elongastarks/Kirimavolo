@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Gestion des Seuils</title>
+</head>
+<body>
+  <h2>Ajouter un nouveau seuil</h2>
+  <label>ClasseR: <input type="number" id="classeRInput"></label><br>
+  <label>Section: <input type="text" id="sectionInput"></label><br>
+  <label>Seuil: <input type="number" id="seuilInput"></label><br>
+  <button id="ajouterBtn">Ajouter</button>
+
+  <hr>
+
+  <h2>Modifier un seuil existant</h2>
+  <button id="chargerBtn">Voir les classes existantes</button>
+  <div id="listeSeuils"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, query } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+      authDomain: "ecole-ef9c1.firebaseapp.com",
+      projectId: "ecole-ef9c1",
+storageBucket: "ecole-ef9c1.firebasestorage.app",
+      messagingSenderId: "445607617414",
+      appId: "1:445607617414:web:0678d9b103732f17210207"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const ajouterBtn = document.getElementById("ajouterBtn");
+    const chargerBtn = document.getElementById("chargerBtn");
+    const listeSeuils = document.getElementById("listeSeuils");
+
+    ajouterBtn.addEventListener("click", async () => {
+      const classeR = parseInt(document.getElementById("classeRInput").value);
+      const section = document.getElementById("sectionInput").value.trim();
+      const seuil = parseInt(document.getElementById("seuilInput").value);
+
+      if (!classeR || !section || isNaN(seuil)) {
+        alert("Veuillez remplir tous les champs correctement.");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "seuilResultat"), {
+          classeR,
+          section,
+          seuil
+        });
+        alert("Ajout réussi !");
+      } catch (e) {
+        alert("Erreur lors de l'ajout : " + e);
+      }
+    });
+
+    chargerBtn.addEventListener("click", async () => {
+      listeSeuils.innerHTML = ""; // nettoyer
+      const q = query(collection(db, "seuilResultat"));
+const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <p><strong>ClasseR:</strong> ${data.classeR} - <strong>Section:</strong>${data.section}</p>
+          <label>Nouveau seuil:
+            <input type="number" value="${data.seuil}" id="seuil-${docSnap.id}">
+          </label>
+          <button onclick="updateSeuil('${docSnap.id}')">Enregistrer</button>
+          <hr>
+        `;
+        listeSeuils.appendChild(div);
+      });
+    });
+
+    window.updateSeuil = async function(id) {
+      const input = document.getElementById("seuil-" + id);
+      const newSeuil = parseInt(input.value);
+
+      if (isNaN(newSeuil)) {
+        alert("Veuillez entrer un nombre valide.");
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, "seuilResultat", id), {
+          seuil: newSeuil
+        });
+        alert("Seuil mis à jour.");
+      } catch (e) {
+        alert("Erreur de mise à jour : " + e);
+      }
+    };
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
