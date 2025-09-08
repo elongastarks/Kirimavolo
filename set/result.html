@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vérification Paiement</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    input, button { padding: 10px; margin: 10px 0; width: 95%; }
+    .result { display: none; background: #f0f0f0; padding: 15px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Vérifier le paiement de l'élève</h2>
+  <input type="text" id="eleveIdInput" placeholder="Entrer l'ID de l'élève" />
+  <button id="verifierBtn">Vérifier</button>
+
+  <div id="resultat" style="margin-top: 20px;">
+    <div class="result" id="resultContainer">
+      <p><strong>Nom :</strong> <span id="nom"></span></p>
+      <p><strong>Poste-nom :</strong> <span id="postenom"></span></p>
+      <p><strong>Prénom :</strong> <span id="prenom"></span></p>
+      <p><strong>Section :</strong> <span id="section"></span></p>
+  <p><strong>Classe :</strong> <span id="classe"></span></p>
+      <p><strong>Pourcentage :</strong> <span id="pourcent"></span></p>
+      <p><strong>Note :</strong> <span id="note"></span></p>
+      <p><strong>État :</strong> <span id="statut"></span></p>
+    </div>
+    <div class="result" id="resteContainer">
+      <p>Il manque encore <strong><span id="diff"></span> FCFA</strong> pour atteindre le seuil.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+      authDomain: "ecole-ef9c1.firebaseapp.com",
+      projectId: "ecole-ef9c1",
+      storageBucket: "ecole-ef9c1.firebasestorage.app",
+      messagingSenderId: "445607617414",
+      appId: "1:445607617414:web:0678d9b103732f17210207"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const verifierBtn = document.getElementById("verifierBtn");
+
+    verifierBtn.addEventListener("click", async () => {    
+const eleveId = document.getElementById("eleveIdInput").value.trim();
+      const eleveRef = doc(db, "eleves", eleveId);
+      const eleveSnap = await getDoc(eleveRef);
+
+      const resultDiv = document.getElementById("resultContainer");
+      const resteDiv = document.getElementById("resteContainer");
+      resultDiv.style.display = "none";
+      resteDiv.style.display = "none";
+
+      if (eleveSnap.exists()) {
+        const data = eleveSnap.data();
+        const classe = data.classe;
+        const montant = Number(data.montant);
+
+        const q = query(collection(db, "seuilResultat"), where("classeR", "==", classe));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const seuilData = querySnapshot.docs[0].data();
+          const seuil = Number(seuilData.seuil);
+
+          if (montant >= seuil) {
+            // Afficher infos
+            document.getElementById("nom").textContent = data.nom;
+            document.getElementById("postenom").textContent = data.postenom;
+            document.getElementById("prenom").textContent = data.prenom;
+            document.getElementById("section").textContent = data.section;
+            document.getElementById("classe").textContent = classe;
+document.getElementById("pourcent").textContent = data.pourcent || "-";
+            document.getElementById("note").textContent = data.note || "-";
+            document.getElementById("statut").textContent = "Payé";
+
+            resultDiv.style.display = "block";
+          } else {
+            // Afficher différence
+            const diff = seuil - montant;
+            document.getElementById("diff").textContent = diff;
+            resteDiv.style.display = "block";
+          }
+        } else {
+          alert("Aucun seuil trouvé pour cette classe.");
+        }
+      } else {
+        alert("Élève introuvable !");
+      }
+    });
+  </script>
+</body>
+</html>

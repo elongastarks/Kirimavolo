@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Paramètres & Formations</title>
+  <style>
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px; width: 26px;
+      left: 4px; bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #4caf50;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+  
+  </style>
+</head>
+<body>
+<h2>Modifier Actualité</h2>
+ <input class="idd" type="text" value="rDv56n1nJFZC4esLVmtK" readonly onclick="this.select()" style="width: 50%;">
+  <label for="formation-id">ID formation (doc):</label>
+  <input type="text" id="formation-id" placeholder="Entrez l'ID de la formation" />
+  <button id="charger-formation">Charger</button>
+
+  <label for="titre">Titre :</label>
+  <input type="text" id="titre" />
+
+  <label for="duree">Contenu :</label>
+  <input type="text" id="duree" />
+
+  <button id="enregistrer-formation">Enregistrer Formation</button>
+
+  <hr />
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+      authDomain: "ecole-ef9c1.firebaseapp.com",
+      projectId: "ecole-ef9c1",
+      storageBucket: "ecole-ef9c1.firebasestorage.app",
+      messagingSenderId: "445607617414",
+      appId: "1:445607617414:web:0678d9b103732f17210207"
+    };
+const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Partie 1 : Formations
+    const inputId = document.getElementById("formation-id");
+    const inputTitre = document.getElementById("titre");
+    const inputDuree = document.getElementById("duree");
+    const btnCharger = document.getElementById("charger-formation");
+    const btnEnregistrer = document.getElementById("enregistrer-formation");
+
+    btnCharger.addEventListener("click", async () => {
+      const id = inputId.value.trim();
+      if (!id) return alert("Veuillez entrer un ID de formation.");
+
+      try {
+        const formationDoc = doc(db, "formations", id);
+        const snap = await getDoc(formationDoc);
+
+        if (!snap.exists()) {
+          alert("Formation non trouvée.");
+          inputTitre.value = "";
+          inputDuree.value = "";
+          return;
+        }
+        const data = snap.data();
+        inputTitre.value = data.titre || "";
+        inputDuree.value = data.duree || "";
+      } catch (e) {
+        alert("Erreur chargement : " + e.message);
+      }
+    });
+
+    btnEnregistrer.addEventListener("click", async () => {
+      const id = inputId.value.trim();
+      const titre = inputTitre.value.trim();
+      const duree = inputDuree.value.trim();
+if (!id) return alert("Veuillez entrer un ID de formation.");
+      if (!titre) return alert("Veuillez entrer un titre.");
+      if (!duree) return alert("Veuillez entrer une durée.");
+
+      try {
+        const formationDoc = doc(db, "formations", id);
+        await updateDoc(formationDoc, { titre, duree });
+        alert("Actualité mise à jour.");
+      } catch (e) {
+        alert("Erreur mise à jour : " + e.message);
+      }
+    });
+
+    
+  </script>
+</body>
+</html>
+
+
