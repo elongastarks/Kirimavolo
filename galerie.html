@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galerie</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f8f8;
+    }
+    header {
+      background: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      background: #2563eb;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    
+    h1 {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      padding: 0 20px 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .gallery img:hover {
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+ <header>
+    <h1>Galerie de l'École</h1>
+     <nav>
+      <a href="Accueil">Accueil</a>
+      <a href="historique.html">historique</a>
+    </nav>
+  </header>
+     <h1>INSTITUT KIRIMAVOLO</h1></br>
+  <div class="gallery">
+    <img src="sources/image1.jpg" alt="Image 1">
+    <img src="sources/image2.jpg" alt="Image 2">
+    <img src="sources/image3.jpg" alt="Image 3">
+    <img src="sources/image4.jpg" alt="Image 4">
+    <img src="sources/image5.jpg" alt="Image 5">
+    <img src="sources/image6.jpg" alt="Image 6">
+    <img src="sources/image7.jpg" alt="Image 7">
+    <img src="sources/image8.jpg" alt="Image 8">
+    <img src="sources/image9.jpg" alt="Image 9">
+    <img src="sources/image10.jpg" alt="Image 10">
+    <img src="sources/image11.jpg" alt="Image 11">
+    <img src="sources/image12.jpg" alt="Image 12">
+    <img src="sources/image13.jpg" alt="Image 13">
+    <img src="sources/image14.jpg" alt="Image 14">
+    <img src="sources/image15.jpg" alt="Image 15">
+  </div>
+
+</body>
+</html>
+
