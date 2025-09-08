@@ -10,10 +10,18 @@
       font-weight: bold;
       color: green;
     }
+    @keyframes clignote {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
-<p >votre résultat 😎</p>
+<h2>votre résultat 😎</h2>
+  <p style="animation: clignote 4s infinite; color: blue; font-weight: bold;">
+  Veuillez patienter, le lien vers le résultat apparaîtra dans quelques secondes...
+  </p>
   <p id="message"><a href="https://elongastarks.github.io/Kirimavolo/set/result.html"  id="result">consulter votre résultat</a></p>
  <p id="messages" style="display: none; font-weight: bold; color: red;">résultats pas encore disponible</p>
 
