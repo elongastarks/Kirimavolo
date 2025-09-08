@@ -1,0 +1,273 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ADMINISTRATION</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { font-size: 32px; }
+    h2 { font-size: 20px; margin-top: 30px; }
+    label { display: block; margin-top: 10px; }
+    input, textarea, button {
+      margin-top: 5px;
+      padding: 6px;
+      width: 250px;
+      max-width: 100%;
+    }
+    header {
+      background: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #ddd;
+    }
+    .titre-ecole {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    nav a {
+      margin: 0 10px;
+      color: green;
+    }
+    .inline-btn {
+      display: inline-block;
+      margin-left: 10px;
+      width: auto;
+    }
+    .buttonn {
+        width: 20%;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="titre-ecole">INSTITUT KIRIMAVOLO</div>
+    <nav>
+      <a href="/index.html">Accueil</a>
+      <a href="/historique.html">historique</a>
+      <a href="/galerie.html">Galerie</a>
+      <a href="/resultats.html">resultats</a>
+    </nav>
+  </header>
+    <h1>ADMINISTRATION</h1>
+  <div>
+  <label> Donner accès au résultat 
+  <a href="/resultaccess.html">seting</a>
+  </label>
+  </div>
+  <div>
+  <label> inscription d'un nouvel élève 
+  <a href="../inscription.html">add</a>
+  </label>
+  </div>
+  <div>
+  <label> Modifier payement de l'élève 
+  <a href="/secretary.html">seting</a>
+  </label>
+  </div>
+  <div>
+  <label> Modifier note de l'élève 
+  <a href="../seteleve.html">seting</a>
+  </label>
+  </div>
+   <div>
+  <label> Modifier les résultats globaux 
+  <a href="/global.html">seting</a>
+  </label>
+  </div>
+  <div>
+  <label> Modifier données de l'élève 
+  <a href="/secretary.html">seting</a>
+  </label>
+  </div>
+  <div>
+  <label> Modifier le seul de chaque classe 
+  <a href="/seuil.html">seting</a>
+  </label>
+  </div>
+  <div>
+  <label> Modifier l'actualité 
+  <a href="../news.html">seting</a>
+  </label>
+  </div>
+  <h2>Gestion des élèves</h2>
+<label>ID Élève (pour rechercher / modifier / supprimer):
+    <input type="text" id="idEleve">
+  </label>
+
+  <label>Classe (ID):
+    <input type="number" id="classe">
+  </label>
+  <label>Section :
+    <input type="text" id="section">
+  </label>
+  <label>Email :
+    <input type="email" id="email">
+  </label>
+  <label>Date inscription (string):
+    <input type="date" id="inscriptionDate">
+  </label>
+  <label>Montant (nombre):
+    <input type="number" id="montant">
+  </label>
+  <label>Date de naissance :
+    <input type="date" id="naissance">
+  </label>
+  <label>Prénom:
+    <input type="text" id="prenom">
+  </label>
+  <label>Postenom:
+    <input type="text" id="postenom">
+  </label>
+  <label>Nom:
+    <input type="text" id="nom">
+  </label>
+  <label>Pourcentage :
+    <input type="number" id="pourcentage">
+  </label>
+  <label>Note :
+    <input type="text" id="note">
+  </label>
+  <label>Statut :
+    <input type="text" id="statut">
+  </label>
+  <label>Téléphone:
+    <input type="tel" id="telephone">
+  </label>
+
+  <br><br>
+  <button class="buttonn" id="selectEleve">SELECT</button>
+  <button class="buttonn" id="updateEleve">UPDATE</button>
+  <button class="buttonn" id="deleteEleve">DELETE</button>
+
+<script type="module">
+  // Importation des fonctions nécessaires depuis les SDK Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    updateDoc,
+    deleteDoc
+  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+  // Configuration Firebase de votre application web
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+    authDomain: "ecole-ef9c1.firebaseapp.com",
+    projectId: "ecole-ef9c1",
+    storageBucket: "ecole-ef9c1.firebasestorage.app",
+    messagingSenderId: "445607617414",
+    appId: "1:445607617414:web:0678d9b103732f17210207"
+  };
+
+  // Initialisation de Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 🔹 PARTIE 3 : Gestion des élèves
+  const insertEleveBtn = document.getElementById("insertEleve");
+  const selectEleveBtn = document.getElementById("selectEleve");
+  const updateEleveBtn = document.getElementById("updateEleve");
+  const deleteEleveBtn = document.getElementById("deleteEleve");
+
+  // Fonction pour récupérer les données des champs d'élève
+  function getEleveData() {
+    return {
+      classe: parseInt(document.getElementById("classe").value) || 0,
+      section: document.getElementById("section").value || "",
+      email: document.getElementById("email").value || "",
+      inscriptionDate: document.getElementById("inscriptionDate").value || "",
+      montant: parseFloat(document.getElementById("montant").value) || 0,
+      naissance: document.getElementById("naissance").value || "",
+      prenom: document.getElementById("prenom").value || "",
+      postenom: document.getElementById("postenom").value || "",
+      nom: document.getElementById("nom").value || "",
+      pourcentage: parseFloat(document.getElementById("pourcentage").value) || 0,
+      note: document.getElementById("note").value || "",
+      statut: document.getElementById("statut").value || "",
+  telephone: document.getElementById("telephone").value || ""
+    };
+  }
+
+  // Fonction pour remplir les champs avec les données d'un élève
+  function fillEleveFields(data) {
+    document.getElementById("classe").value = data.classe || "";
+    document.getElementById("section").value = data.section || "";
+    document.getElementById("email").value = data.email || "";
+    document.getElementById("inscriptionDate").value = data.inscriptionDate || "";
+    document.getElementById("montant").value = data.montant || "";
+    document.getElementById("naissance").value = data.naissance || "";
+    document.getElementById("prenom").value = data.prenom || "";
+    document.getElementById("postenom").value = data.postenom || "";
+    document.getElementById("nom").value = data.nom || "";
+    document.getElementById("pourcentage").value = data.pourcentage || "";
+    document.getElementById("note").value = data.note || "";
+    document.getElementById("statut").value = data.statut || "";
+    document.getElementById("telephone").value = data.telephone || "";
+  }
+
+
+
+  // Sélection d'un élève
+  selectEleveBtn.addEventListener("click", async () => {
+    const idEleve = document.getElementById("idEleve").value.trim();
+    if (!idEleve) {
+      alert("Veuillez entrer l'ID de l'élève.");
+      return;
+    }
+    try {
+      const docRef = doc(db, "eleves", idEleve);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        fillEleveFields(docSnap.data());
+        alert("Données de l'élève chargées.");
+      } else {
+        alert("Aucun élève trouvé avec cet ID.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération :", error);
+      alert("Erreur lors de la récupération des données.");
+    }
+  });
+
+  // Mise à jour d'un élève
+  updateEleveBtn.addEventListener("click", async () => {
+    const idEleve = document.getElementById("idEleve").value.trim();
+    if (!idEleve) {
+      alert("Veuillez entrer l'ID de l'élève.");
+      return;
+    }
+    const eleveData = getEleveData();
+    try {
+      await updateDoc(doc(db, "eleves", idEleve), eleveData);
+      alert("Élève mis à jour avec succès.");
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour :", error);
+      alert("Erreur lors de la mise à jour de l'élève.");
+    }
+  });
+
+  // Suppression d'un élève
+  deleteEleveBtn.addEventListener("click", async () => {
+    const idEleve = document.getElementById("idEleve").value.trim();
+    if (!idEleve) {
+      alert("Veuillez entrer l'ID de l'élève.");
+      return;
+    }
+    try {
+      await deleteDoc(doc(db, "eleves", idEleve));
+      alert("Élève supprimé avec succès.");
+    } catch (error) {
+        console.error("Erreur lors de la suppression :", error);
+      alert("Erreur lors de la suppression de l'élève.");
+    }
+  });
+</script>
+</body>
+</html>
