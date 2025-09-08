@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Modifier Access</title>
+</head>
+<body>
+  <h2>Modifier l'accès</h2>
+  <label for="accessSelect">Choisissez :</label>
+  <select id="accessSelect">
+    <option value="oui">Oui</option>
+    <option value="non">Non</option>
+  </select>
+  <button id="updateBtn">Mettre à jour</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+      authDomain: "ecole-ef9c1.firebaseapp.com",
+      projectId: "ecole-ef9c1",
+      storageBucket: "ecole-ef9c1.firebasestorage.app",
+      messagingSenderId: "445607617414",
+      appId: "1:445607617414:web:0678d9b103732f17210207"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.getElementById("updateBtn").addEventListener("click", async () => {
+      const selectedValue = document.getElementById("accessSelect").value;
+try {
+        await updateDoc(doc(db, "access", "access"), {
+          access: selectedValue
+        });
+        alert("Champ 'access' mis à jour avec succès !");
+      } catch (e) {
+        alert("Erreur lors de la mise à jour : " + e.message);
+      }
+    });
+  </script>
+</body>
+</html>
