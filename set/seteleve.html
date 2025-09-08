@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Modifier l'élève</title>
+</head>
+<body>
+  <h2>Modifier pourcentage et note</h2>
+
+  <label for="eleveIdInput">ID de l'élève :</label>
+  <input type="text" id="eleveIdInput" required>
+  <button id="loadBtn">Charger</button>
+
+  <form id="eleveForm" style="display:none;">
+    <p id="eleveInfo"></p>
+
+    <label for="pourcentageInput">Pourcentage :</label>
+    <input type="number" id="pourcentageInput" min="0" max="100" required><br><br>
+
+    <label for="noteInput">Notes : </label>
+    <textarea id="noteInput" placeholder="Ex: Math 10/10, Fr 8/10"></textarea><br><br>
+
+    <button type="submit">Enregistrer</button>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+authDomain: "ecole-ef9c1.firebaseapp.com",
+      projectId: "ecole-ef9c1",
+      storageBucket: "ecole-ef9c1.firebasestorage.app",
+      messagingSenderId: "445607617414",
+      appId: "1:445607617414:web:0678d9b103732f17210207"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const eleveIdInput = document.getElementById("eleveIdInput");
+    const loadBtn = document.getElementById("loadBtn");
+    const eleveForm = document.getElementById("eleveForm");
+    const eleveInfo = document.getElementById("eleveInfo");
+    const pourcentageInput = document.getElementById("pourcentageInput");
+    const noteInput = document.getElementById("noteInput");
+
+    let currentDocId = null;
+
+    loadBtn.addEventListener("click", async () => {
+      const id = eleveIdInput.value.trim();
+      if (!id) return;
+
+      const ref = doc(db, "eleves", id);
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        alert("Élève non trouvé !");
+        eleveForm.style.display = "none";
+        return;
+      }
+
+      const data = snap.data();
+      currentDocId = id;
+
+      eleveInfo.textContent = `Nom: ${data.nom} ${data.postenom} ${data.prenom}`;
+      pourcentageInput.value = data.pourcentage ?? "";
+      noteInput.value = data.note ?? "";
+ eleveForm.style.display = "block";
+    });
+
+    eleveForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentDocId) return;
+
+      const pourcent = parseFloat(pourcentageInput.value);
+      const note = noteInput.value.trim();
+
+      if (isNaN(pourcent) || pourcent < 0 || pourcent > 100) {
+        alert("Pourcentage invalide !");
+        return;
+      }
+
+      const ref = doc(db, "eleves", currentDocId);
+      await updateDoc(ref, {
+        pourcentage: pourcent,
+        note: note
+      });
+
+      alert("Données mises à jour !");
+    });
+  </script>
+</body>
+</html>
+
