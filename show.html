@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Page d'accès</title>
+  <style>
+    #message {
+      display: none;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+<p >votre résultat 😎</p>
+  <p id="message"><a href="/result.html"  id="result">consulter votre résultat</a></p>
+ <p id="messages" style="display: none; font-weight: bold; color: red;">résultats pas encore disponible</p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+      authDomain: "ecole-ef9c1.firebaseapp.com",
+      projectId: "ecole-ef9c1",
+      storageBucket: "ecole-ef9c1.firebasestorage.app",
+      messagingSenderId: "445607617414",
+      appId: "1:445607617414:web:0678d9b103732f17210207"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const message = document.getElementById("message");
+    const msg = document.getElementById("messages");
+    const accessDoc = await getDoc(doc(db, "access", "access"));
+    if (accessDoc.exists() ){
+    if( accessDoc.data().access === "oui") {
+message.style.display = "block";
+
+    }else{
+        msg.style.display = "block";
+    }
+ }
+  </script>
+
+</body>
+</html>
+
+
+
+
+
