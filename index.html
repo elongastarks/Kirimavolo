@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nom de l'École</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+    }
+    header {
+      background: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #ddd;
+    }
+    .titre-ecole {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+    }
+    .btn-resultats {
+      background: #2563eb;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .history {
+      margin: 0 5px;
+      background: #2563eb;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .container {
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .left {
+      flex: 1 1 300px;
+      max-width: 48%;
+    }
+    .right {
+      flex: 1 1 300px;
+      max-width: 48%;
+    }
+    .right img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    h1 {
+      font-size: 30px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .box {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .left, .right {
+        max-width: 100%;
+      }
+    }
+     .formation {
+         width: 80%;
+         height: 50%;
+      border: 1px solid #ccc;
+      padding: 16px;
+      margin-bottom: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+    .list-formations{
+        padding: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="titre-ecole">INSTITUT KIRIMAVOLO</div>
+    <nav>
+      <a href="#formations">Formations</a>
+      <a href="#actualites">Actualités</a>
+      <a href="galerie.html">Galerie</a>
+      <a href="#contact">Contact</a>
+    </nav>
+      <a class="history" href="historique.html">Historique</a>
+    <a class="btn-resultats" href="resultats.html">Accéder aux résultats</a>
+  </header>
+
+  <div class="container">
+    <div class="left">
+      <h1>Bienvenue sur notre site</h1>
+      <p>École professionnelle offrant une formation de qualité</p>
+    </div>
+    <div class="right">
+      <img src="sources/ecole.jpg" alt="Image de l'école" />
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="box" id="options">
+      <h3>Nos Formations</h3>
+      <h3>
+      <ul id="list-formations">
+      <li>Électronique</li>
+      <li>Secrétariat</li>
+      <li>Agronomie</li>
+      <li>Vétérinaire</li></h3>
+      </ul>
+    </div>
+
+    <div class="box" id="actualites">
+    <h3>Actualités</h3>
+       <div id="formations"></div>
+    </div>
+
+    <div class="box" id="galerie">
+      <h3>Galerie</h3>
+      <img src="" id="img-galerie" alt="Image galerie" />
+    </div>
+
+    <div class="box" id="contact">
+      <h3>Contact</h3>
+      <p>123 Rue Principale, Ville</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+      authDomain: "ecole-ef9c1.firebaseapp.com",
+      projectId: "ecole-ef9c1",
+      storageBucket: "ecole-ef9c1.firebasestorage.app",
+      messagingSenderId: "445607617414",
+      appId: "1:445607617414:web:0678d9b103732f17210207"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const formationsContainer = document.getElementById("formations");
+    const formationsRef = collection(db, "formations");
+
+    onSnapshot(formationsRef, (snapshot) => {
+      formationsContainer.innerHTML = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        formationsContainer.innerHTML += `<div class="formation">
+            <h4>${data.titre}</h4>
+            ${data.duree}</br>
+          </div>
+        `;
+      });
+    });
+  </script>
+</body>
+</html>
+
