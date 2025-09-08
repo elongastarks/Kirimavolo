@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Inscription Élève</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input {
+      width: 97%;
+      padding: 8px;
+      margin-top: 4px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      background-color: #3498db;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+ <h1>INSTITUT KIRIMAVOLO</h1></br>
+  <h2>Formulaire d'inscription</h2>
+  <div id="eleveIdResult"></div>
+  <form id="inscriptionForm">
+    <label>Nom
+      <input type="text" id="nom" required>
+    </label>
+    <label>Postenom
+      <input type="text" id="postenom" required>
+    </label>
+    <label>Prénom
+      <input type="text" id="prenom" required>
+    </label>
+    <label>Date de naissance
+      <input type="date" id="naissance" required>
+    </label>
+    <label>Email
+      <input type="email" id="email" >
+    </label>
+    <label>Téléphone
+      <input type="tel" id="telephone" required>
+    </label>
+     <label>section 
+ <input type="text" id="section" required>
+    </label>
+    <label>Classe (ID)
+ <input type="number" id="classe" required>
+    </label>
+     <label>Pourcentage obtenu 
+ <input type="number" id="pourcentage" required>
+    </label>
+      <label>Date d'inscriptio 
+ <input type="date" id="inscription" value="indéterminee">
+    </label>
+     <label style="display: none;">Note 
+ <input type="text" id="note" value="indisponible" >
+    </label>
+    <label style="display: none;">Montant 
+ <input type="number" id="montant" value="0" >
+    </label>
+    <label style="display: none;">Statut
+ <input type="text" id="statut" value="actif" >
+    </label>
+    <button type="submit">S'inscrire</button>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+      authDomain: "ecole-ef9c1.firebaseapp.com",
+      projectId: "ecole-ef9c1",
+      storageBucket: "ecole-ef9c1.firebasestorage.app",
+      messagingSenderId: "445607617414",
+      appId: "1:445607617414:web:0678d9b103732f17210207"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("inscriptionForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        nom: document.getElementById("nom").value.trim(),
+        postenom: document.getElementById("postenom").value.trim(),
+        prenom: document.getElementById("prenom").value.trim(),
+        naissance: document.getElementById("naissance").value,
+        email: document.getElementById("email").value.trim(),
+ telephone: document.getElementById("telephone").value.trim(),
+        section: document.getElementById("section").value.trim(),
+        classe: parseInt(document.getElementById("classe").value),
+        pourcentage: parseInt(document.getElementById("pourcentage").value),
+        note: parseInt(document.getElementById("note").value),
+        montant: parseInt(document.getElementById("montant").value),
+        statut: parseInt(document.getElementById("statut").value),
+        inscription: parseInt(document.getElementById("inscription").value),
+        inscriptionDate: new Date().toISOString()
+      };
+
+      try {
+        const docRef = await addDoc(collection(db, "eleves"), data);
+alert("Inscription réussie ! 🚨 Please copier l'ID de l'élève ");
+form.reset();
+
+document.getElementById("eleveIdResult").innerHTML = `
+  <p>Inscription réussie !</p>
+  <label>ID de l'élève : (à bien garder)</label>
+  <input type="text" value="${docRef.id}" readonly onclick="this.select()" style="width: 95%;">
+ 
+`;
+      } catch (error) {
+        alert("Erreur lors de l'inscription.");
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
+
