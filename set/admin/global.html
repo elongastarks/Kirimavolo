@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gestion Global</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    input, button { padding: 10px; margin: 10px 0; width: 100%; }
+    .doc-item { background: #f0f0f0; padding: 10px; border-radius: 5px; margin-top: 10px; }
+    .doc-item input { width: 20%; display: inline-block; }
+    .doc-item button { width: 30%; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h2>➕ Ajouter une Classe et Pourcentage Global</h2>
+  <input type="text" id="sectionInput" placeholder="Section" />
+  <input type="text" id="pourcentInput" placeholder="Pourcentage" />
+  <button id="ajouterBtn">Ajouter</button>
+  <p id="message"></p>
+
+  <hr>
+  <h3>📄 Voir et Modifier Pourcentages :</h3>
+  <button id="voirDocsBtn">Voir les documents</button>
+  <div id="docList"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDLqf_Out_xGEkh0HTLu0ZBwZd95ha78w",
+      authDomain: "ecole-ef9c1.firebaseapp.com",
+      projectId: "ecole-ef9c1",
+      storageBucket: "ecole-ef9c1.firebasestorage.app",
+      messagingSenderId: "445607617414",
+      appId: "1:445607617414:web:0678d9b103732f17210207"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const sectionInput = document.getElementById("sectionInput");
+    const pourcentInput = document.getElementById("pourcentInput");
+    const message = document.getElementById("message");
+    const docList = document.getElementById("docList");
+
+    document.getElementById("ajouterBtn").addEventListener("click", async () => {
+      const section = sectionInput.value.trim();
+      const pourcent = pourcentInput.value.trim();
+      if (!section || !pourcent) {
+        message.textContent = "Tous les champs sont requis.";
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "global"), { section, pourcent });
+        message.textContent = "✅ Document ajouté.";
+        sectionInput.value = "";
+pourcentInput.value = "";
+      } catch (e) {
+        message.textContent = "Erreur : " + e.message;
+      }
+    });
+
+    document.getElementById("voirDocsBtn").addEventListener("click", afficherDocs);
+
+    async function afficherDocs() {
+      docList.innerHTML = "";
+      const snapshot = await getDocs(collection(db, "global"));
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "doc-item";
+        div.innerHTML = `
+          <p><strong>ID:</strong> ${docSnap.id}</p>
+          <p><strong>Section:</strong>${data.section}</p>
+          <label>Pourcent:
+            <input type="text" id="pourcent-${docSnap.id}" value="${data.pourcent}">
+          </label>
+          <button onclick="updatePourcent('${docSnap.id}')">Enregistrer</button>
+        `;
+        docList.appendChild(div);
+      });
+    }
+
+    window.updatePourcent = async function(id) {
+      const input = document.getElementById("pourcent-" + id);
+      const newPourcent = input.value.trim();
+      if (!newPourcent) {
+        alert("Le champ pourcent est vide.");
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, "global", id), { pourcent: newPourcent });
+        alert("✅ Mis à jour !");
+      } catch (e) {
+alert("Erreur : " + e.message);
+      }
+    };
+  </script>
+</body>
+</html>
